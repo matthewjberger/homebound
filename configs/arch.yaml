@@ -1,0 +1,16 @@
+links:
+    dunstrc: ~/.config/dunst/dunstrc
+    fish/: ~/.config/fish
+    kglobalshortcutsrc: ~/.config/kglobalshortcutsrc
+    khotkeysrc: ~/.config/khotkeysrc
+    polybar/: ~/.config/polybar
+    set_window_manager.sh: ~/.config/plasma-workspace/env/set_window_manager.sh
+    pulseaudio: ~/.config/pulseaudio-ctl/config
+    ranger: ~/.config/ranger/rc.conf
+    rofi: ~/.config/rofi/config
+    sxhkdrc : ~/.config/sxhkd/sxhkdrc
+    vimrc : ~/.vimrc
+    tmux/.tmux.conf: ~/.tmux.conf
+    tmux.conf.local: ~/.tmux.conf.local
+    xprofile: ~/.xprofile
+    xmodmap: ~/.xmodmap
