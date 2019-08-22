@@ -1,14 +1,11 @@
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, io::Write, path::Path};
+use std::fs::read_to_string;
 use termcolor::{Color, ColorChoice, ColorSpec, StandardStream, WriteColor};
 
 #[cfg(target_family = "unix")]
-use std::os::unix::fs;
-#[cfg(target_family = "unix")]
 use std::os::unix::fs::symlink;
 
-#[cfg(target_family = "windows")]
-use std::fs;
 #[cfg(target_family = "windows")]
 use std::fs::metadata;
 #[cfg(target_family = "windows")]
@@ -48,7 +45,7 @@ impl Config {
             // TODO: Return an error
         }
 
-        let file = fs::read_to_string(path).expect("could not read config!");
+        let file = read_to_string(path).expect("could not read config!");
 
         let extension = path.extension().unwrap();
         let config: Option<Config> = if extension == "yaml" {
@@ -97,10 +94,12 @@ impl Config {
         Ok(())
     }
 
+    #[allow(dead_code)]
     pub fn as_yaml(&self) -> Result<String, serde_yaml::Error> {
         serde_yaml::to_string(&self)
     }
 
+    #[allow(dead_code)]
     pub fn as_toml(&self) -> Result<String, toml::ser::Error> {
         toml::to_string(&self)
     }
