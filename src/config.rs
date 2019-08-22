@@ -1,7 +1,9 @@
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, io::Write, path::Path};
 use std::fs::read_to_string;
+use std::path::PathBuf;
 use termcolor::{Color, ColorChoice, ColorSpec, StandardStream, WriteColor};
+use snafu::{ResultExt, Snafu};
 
 #[cfg(target_family = "unix")]
 use std::os::unix::fs::symlink;
@@ -10,6 +12,17 @@ use std::os::unix::fs::symlink;
 use std::fs::metadata;
 #[cfg(target_family = "windows")]
 use std::os::windows::fs::{symlink_dir, symlink_file};
+
+#[derive(Debug, Snafu)]
+pub enum Error {
+    #[snafu(display("Could not open file! {} : {}", filename.display(), source))]
+    OpenConfig { 
+        filename: PathBuf,
+        source: std::io::Error,
+    },
+}
+
+pub type Result<T> = std::result::Result<T, Error>;
 
 #[cfg(target_family = "unix")]
 fn create_symlink(src: &str, dst: &str) -> std::io::Result<()> {
@@ -38,14 +51,15 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn new(path_str: &str) -> Option<Config> {
+    pub fn new(path_str: &str) -> Result<Config> {
         let path = Path::new(path_str);
         if !path.exists() {
             //println!("Config does not exist at '{:?}'!", config_path_str);
             // TODO: Return an error
         }
 
-        let file = read_to_string(path).expect("could not read config!");
+        let pathb = PathBuf::from(&path_str);
+        let file = read_to_string(path).context(OpenConfig { filename: pathb })?;
 
         let extension = path.extension().unwrap();
         let config: Option<Config> = if extension == "yaml" {
@@ -56,13 +70,9 @@ impl Config {
             None
         };
 
-        if config.is_none() {
-            None
-        } else {
-            let mut config = config.unwrap();
-            config.path = path.to_str().unwrap().to_string();
-            Some(config)
-        }
+        let mut config = config.unwrap();
+        config.path = path.to_str().unwrap().to_string();
+        Ok(config)
     }
 
     pub fn apply(&self, dry_run: bool) -> std::io::Result<()> {
@@ -94,13 +104,13 @@ impl Config {
         Ok(())
     }
 
-    #[allow(dead_code)]
-    pub fn as_yaml(&self) -> Result<String, serde_yaml::Error> {
-        serde_yaml::to_string(&self)
-    }
+    // #[allow(dead_code)]
+    // pub fn as_yaml(&self) -> Result<String, serde_yaml::Error> {
+    //     serde_yaml::to_string(&self)
+    // }
 
-    #[allow(dead_code)]
-    pub fn as_toml(&self) -> Result<String, toml::ser::Error> {
-        toml::to_string(&self)
-    }
+    // #[allow(dead_code)]
+    // pub fn as_toml(&self) -> Result<String, toml::ser::Error> {
+    //     toml::to_string(&self)
+    // }
 }
