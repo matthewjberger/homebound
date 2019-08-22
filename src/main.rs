@@ -9,15 +9,19 @@ mod config;
 struct Opt {
     /// The config file to use.
     #[structopt(short = "c", long = "config")]
-    config: String,
+    config: Option<String>,
 
     /// Whether to do a dry run or not. A dry run will not modify system files or create symlinks.
     #[structopt(short = "d", long = "dry")]
-    dry: bool,
+    dry: Option<bool>,
 }
 
 fn main() {
     let opt = Opt::from_args();
-    let config = Config::new(&opt.config).unwrap();
-    config.apply(opt.dry).unwrap();
+    if opt.config.is_some() {
+        let config = Config::new(&opt.config.unwrap()).unwrap();
+        config.apply(opt.dry.unwrap()).unwrap();
+    } else {
+        println!("No config specified.");
+    }
 }
