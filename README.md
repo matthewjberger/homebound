@@ -17,7 +17,7 @@
         </td>
         <td>
                 <a href="https://ci.appveyor.com/project/matthewjberger/homebound" title="Appveyor Build Status">
-                    <img src="https://ci.appveyor.com/api/projects/status/cps12m8h1b7hd5ma/branch/master?svg=true" alt="appveyor-badge"/>
+                    <img src="https://ci.appveyor.com/api/projects/status/5ei7afhoy2yivdaa/branch/master?svg=true" alt="appveyor-badge"/>
                 </a>
         </td>
     </tr>
