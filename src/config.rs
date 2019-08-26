@@ -1,9 +1,9 @@
 use serde::{Deserialize, Serialize};
-use std::{collections::HashMap, io::Write, path::Path};
+use snafu::{ResultExt, Snafu};
 use std::fs::read_to_string;
 use std::path::PathBuf;
+use std::{collections::HashMap, io::Write, path::Path};
 use termcolor::{Color, ColorChoice, ColorSpec, StandardStream, WriteColor};
-use snafu::{ResultExt, Snafu};
 
 #[cfg(target_family = "unix")]
 use std::os::unix::fs::symlink;
@@ -16,7 +16,7 @@ use std::os::windows::fs::{symlink_dir, symlink_file};
 #[derive(Debug, Snafu)]
 pub enum Error {
     #[snafu(display("Could not open file! {} : {}", filename.display(), source))]
-    OpenConfig { 
+    OpenConfig {
         filename: PathBuf,
         source: std::io::Error,
     },

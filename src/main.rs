@@ -6,22 +6,26 @@ mod config;
 
 #[derive(Debug, StructOpt)]
 #[structopt(name = "Homebound", about = "A cross-platform symlink manager")]
-struct Opt {
-    /// The config file to use.
-    #[structopt(short = "c", long = "config")]
-    config: Option<String>,
+enum Homebound {
+    #[structopt(name = "install")]
+    Install {
+        /// The config file to use.
+        #[structopt(short = "c", long = "config", default_value = "config.yaml")]
+        config: String,
 
-    /// Whether to do a dry run or not. A dry run will not modify system files or create symlinks.
-    #[structopt(short = "d", long = "dry")]
-    dry: Option<bool>,
+        /// Whether to do a dry run or not. A dry run will not modify system files or create symlinks.
+        #[structopt(short = "d", long = "dry")]
+        dry: bool,
+    },
 }
 
 fn main() {
-    let opt = Opt::from_args();
-    if opt.config.is_some() {
-        let config = Config::new(&opt.config.unwrap()).unwrap();
-        config.apply(opt.dry.unwrap()).unwrap();
-    } else {
-        println!("No config specified.");
+    match Homebound::from_args() {
+        Homebound::Install { config, dry } => {
+            let config_data = Config::new(&config).expect("Could not create configuration");
+            config_data
+                .apply(dry)
+                .expect("Error applying configuration");
+        }
     }
 }
