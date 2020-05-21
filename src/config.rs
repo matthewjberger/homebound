@@ -88,7 +88,7 @@ impl Config {
         writeln!(&mut stdout, "======================")?;
 
         for (src, dst) in &self.links {
-            let src_path = Path::new(&self.path).join(src);
+            let src_path = Path::new(&self.path).parent().unwrap().join(src);
             let src_path_display = src_path.to_str().unwrap();
             if src_path.exists() {
                 stdout.set_color(ColorSpec::new().set_fg(Some(Color::Green)))?;
